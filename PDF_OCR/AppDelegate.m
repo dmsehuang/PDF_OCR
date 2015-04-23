@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "RecognitionPageVC.h"
+#import "CharactersTVC.h"
 
 @interface AppDelegate ()
 
@@ -17,7 +19,27 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [self initTabViewController];
     return YES;
+}
+
+/* init tab view controller */
+-(void)initTabViewController {
+    UITabBarController* tabBarController = [[UITabBarController alloc] init];
+    
+    // page view controller
+    RecognitionPageVC* pageVC = [[RecognitionPageVC alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
+    pageVC.title = @"Learning";
+    //pageVC.tabBarItem.image = [UIImage imageNamed:@"Bookmark-50.png"];
+    
+    // table view controller
+    CharactersTVC* charactersTVC = [[CharactersTVC alloc] init];
+    charactersTVC.title = @"mastered";
+    //charactersTVC.tabBarItem.image = [UIImage imageNamed:@"Crab-50.png"];
+    
+    tabBarController.viewControllers = [NSArray arrayWithObjects:pageVC, charactersTVC, nil];
+    
+    self.window.rootViewController = tabBarController;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
