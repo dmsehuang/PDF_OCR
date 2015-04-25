@@ -11,5 +11,6 @@
 @interface RecognitionPageVC : UIPageViewController <UIPageViewControllerDataSource>
 
 @property (nonatomic) NSUInteger numberOfPages;
+@property (nonatomic, strong) UIImage* pdfImage;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "RecognitionDetailVC.h"
+#import "Character.h"
 
 @interface RecognitionDetailVC ()
 
@@ -29,10 +30,17 @@
     UILabel* label = [[UILabel alloc] initWithFrame:
                       CGRectMake(label_x, label_y, label_width, label_height)];
     label.backgroundColor = [UIColor yellowColor];
-    label.text = [NSString stringWithFormat:@"Character #%d", self.characterNumber];
+    label.text = [NSString stringWithFormat:@"Character #%lu", (unsigned long)self.characterNumber];
     
     [self.view addSubview:label];
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    CGFloat x = 50;
+    CGFloat y = 300;
+    UIImage *blackNWhiteImage = [Character getBlackNWhiteImageFromImage:self.pdfImage];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, blackNWhiteImage.size.width, blackNWhiteImage.size.height)];
+    imageView.image = blackNWhiteImage;
+    [self.view addSubview:imageView];
 }
 
 - (void)didReceiveMemoryWarning {
