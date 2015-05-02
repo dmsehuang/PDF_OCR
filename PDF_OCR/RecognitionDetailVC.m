@@ -7,7 +7,6 @@
 //
 
 #import "RecognitionDetailVC.h"
-#import "Character.h"
 
 @interface RecognitionDetailVC ()
 
@@ -37,9 +36,10 @@
     
     CGFloat x = 50;
     CGFloat y = 300;
-    UIImage *blackNWhiteImage = [Character getBlackNWhiteImageFromImage:self.pdfImage];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, blackNWhiteImage.size.width, blackNWhiteImage.size.height)];
-    imageView.image = blackNWhiteImage;
+//    UIImage *blackNWhiteImage = [Character getBlackNWhiteImageFromImage:self.pdfImage];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, y,
+                                                                           self.characterImage.size.width, self.characterImage.size.height)];
+    imageView.image = self.characterImage;
     [self.view addSubview:imageView];
 }
 

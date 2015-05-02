@@ -8,6 +8,7 @@
 
 #import "RecognitionPageVC.h"
 #import "RecognitionDetailVC.h"
+#import "Character.h"
 
 @interface RecognitionPageVC ()
 
@@ -19,11 +20,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.numberOfPages = 5;
-//    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
-    self.pdfImage = [UIImage imageNamed:@"4_sample_jack-ma.png"];
+    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
     
+    self.dataSource = self;
+    self.pageIndex = 0;
+    self.characterImages = [Character getCharactersFromTextImage:self.pdfImage];
     RecognitionDetailVC *initialDetailVC = [self viewControllerAtIndex:0];
-    initialDetailVC.pdfImage = self.pdfImage; // for test
     NSArray *viewControllers = [NSArray arrayWithObjects:initialDetailVC, nil];
     [self setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
@@ -44,16 +46,27 @@
 */
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-    return nil;
+    NSLog(@"before");
+    if (self.pageIndex == 0) {
+        return nil;
+    }
+    self.pageIndex--;
+    return [self viewControllerAtIndex:self.pageIndex];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-    return nil;
+    NSLog(@"after, count: %d", [self.characterImages count]);
+    if (self.pageIndex + 1 == [self.characterImages count]) {
+        return nil;
+    }
+    self.pageIndex++;
+    return [self viewControllerAtIndex:self.pageIndex];
 }
 
 - (RecognitionDetailVC *)viewControllerAtIndex:(NSUInteger)index {
     RecognitionDetailVC *detailVC = [[RecognitionDetailVC alloc] init];
     detailVC.characterNumber = index;
+    detailVC.characterImage = [self.characterImages objectAtIndex:index];
     return detailVC;
 }
 

@@ -12,6 +12,7 @@
 
 @property (nonatomic) NSUInteger characterNumber;
 
-@property (nonatomic, strong) UIImage* pdfImage;
+@property (nonatomic, strong) UIImage *characterImage;
+//@property (nonatomic, strong) UIImage *pdfImage;
 
 @end
