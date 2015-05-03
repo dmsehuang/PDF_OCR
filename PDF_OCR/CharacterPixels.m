@@ -46,8 +46,8 @@
     NSUInteger width = self.y_max - self.y_min;
     uint32_t *pixels = (uint32_t *)calloc(width * height, sizeof(uint32_t));
     for (int i = 0; i < [self.x_arr count]; i++) {
-        int x = [(NSNumber *)[self.x_arr objectAtIndex:i] intValue] - self.x_min;
-        int y = [(NSNumber *)[self.y_arr objectAtIndex:i] intValue] - self.y_min;
+        int x = [(NSNumber *)[self.x_arr objectAtIndex:i] integerValue] - self.x_min;
+        int y = [(NSNumber *)[self.y_arr objectAtIndex:i] integerValue] - self.y_min;
         int index = (int)width * x + y;
         pixels[index] = 0xFF000000;
     }

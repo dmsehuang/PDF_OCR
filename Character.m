@@ -32,7 +32,12 @@
     NSUInteger topLine = [(NSNumber *)[lines objectAtIndex:2] integerValue];
     NSUInteger bottomLine = [(NSNumber *)[lines objectAtIndex:3] integerValue];
     NSArray *characterImages = [self connectedComponentFromPixels:pixels withWidth:width betweenTopLine:topLine andBottomLine:bottomLine];
+    
     return characterImages;
+    
+    // for test
+//    UIImage *blackNWhite = [self getBlackNWhiteImageFromImage:image];
+//    return [NSArray arrayWithObjects:blackNWhite, nil];
 }
 
 + (NSString *)getCharacterFromCharacterImage:(UIImage *)image {
@@ -41,6 +46,8 @@
 
 // OCR - line detection
 // TODO - deal with special case: i, j
+//+ (UIImage *)LineDetectionForPixels:(uint32_t *)pixels
+//                          withWidth:(NSUInteger)width andHeight:(NSUInteger)height{
 + (NSArray *)LineDetectionForPixels:(uint32_t *)pixels
                           withWidth:(NSUInteger)width andHeight:(NSUInteger)height{
     // lines array used to store all detected lines
@@ -63,32 +70,31 @@
                 [lines addObject:[NSNumber numberWithInt:i]];
                 top = true;
                 /*
-                 // draw line to test
-                 for (int j = 0; j < width; j++) {
-                 NSUInteger index = width * i + j;
-                 pixels[index] = 0xFFFF6666;
-                 }
-                 */
-                
+                // draw line to test
+                for (int j = 0; j < width; j++) {
+                    NSUInteger index = width * i + j;
+                    pixels[index] = 0xFFFF6666;
+                }
+                */
             }
         } else {
             if (top) {
                 [lines addObject:[NSNumber numberWithInt:i]];
                 top = false;
                 /*
-                 // draw line to test
-                 for (int j = 0; j < width; j++) {
-                 NSUInteger index = width * i + j;
-                 pixels[index] = 0xFFFF6666;
-                 }
-                 */
+                // draw line to test
+                for (int j = 0; j < width; j++) {
+                    NSUInteger index = width * i + j;
+                    pixels[index] = 0xFFFF6666;
+                }
+                */
             }
         }
     }
     free(horiArr); // free memory after use
     // for test
-    //UIImage *image = [self convertPixels:pixels toImageWithWidth:width andHeight:height];
-    //return image;
+//    UIImage *image = [self convertPixels:pixels toImageWithWidth:width andHeight:height];
+//    return image;
     
     return [NSArray arrayWithArray:lines];
 }
@@ -108,8 +114,8 @@
     NSUInteger labelArr[height][width]; // C style
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
-    NSLog(@"%d", height);
-    NSLog(@"%d", width);
+//    NSLog(@"hhj %d", height);
+//    NSLog(@"hhj %d", width);
     for (int i = 0; i < height; i++) {
         NSString *line = [NSString stringWithFormat:@""];
         for (int j = 0; j < width; j++) {
@@ -127,7 +133,7 @@
     NSUInteger labelCount = 0; // label begins with 1
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            NSUInteger index = width * i + j;
+            NSUInteger index = width * (i + topLine) + j;
             // TODO - this logic need to be modified
             if (R(pixels[index]) == 255) continue; // skip white pixel
             
@@ -167,35 +173,25 @@
                 if (x < 0 || x >= height) continue;
                 if (y < 0 || y >= width) continue;
                 if (labelArr[x][y] == 0) continue;
-                
-//                if (parent[labelArr[x][y]] != minLabel) {
-//                    NSLog(@"%d, %d", x, y);
-//                    for (int z = 0; z < 4; z++) {
-//                        NSInteger xz = xcorrd[z];
-//                        NSInteger yz = ycoord[z];
-//                        NSLog(@"label[%d][%d] = %d", xz, yz, labelArr[xz][yz]);
-//                    }
-//                    NSLog(@"label: %d, (min label) parent %d", labelArr[x][y], minLabel);
-//                }
                 NSUInteger oldParent = parent[labelArr[x][y]];
                 parent[labelArr[x][y]] = oldParent < minLabel ? oldParent : minLabel;
             }
         }
     }
     
-    NSMutableString* test = [[NSMutableString alloc] initWithString:@"\n"];
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            if (labelArr[i][j] == 0) {
-                [test appendString:@" "];
-            } else {
-                [test appendString:[NSString stringWithFormat:@"%d", (int)labelArr[i][j]]];
-            }
-        }
-        [test appendString:@"\n"];
-    }
-    NSLog(@"test result");
-    NSLog(@"%@", test);
+//    NSMutableString* test = [[NSMutableString alloc] initWithString:@"\n"];
+//    for (int i = 0; i < height; i++) {
+//        for (int j = 0; j < width; j++) {
+//            if (labelArr[i][j] == 0) {
+//                [test appendString:@" "];
+//            } else {
+//                [test appendString:[NSString stringWithFormat:@"%d", (int)labelArr[i][j]]];
+//            }
+//        }
+//        [test appendString:@"\n"];
+//    }
+//    NSLog(@"test result");
+//    NSLog(@"%@", test);
     
     
     /*
@@ -251,8 +247,8 @@
     return blackNWhiteImage;
     
     // test line
-    //UIImage *imageWithLine = [self LineDetectionForPixels:pixels withWidth:width andHeight:height];
-    //return imageWithLine;
+//    UIImage *imageWithLine = [self LineDetectionForPixels:pixels withWidth:width andHeight:height];
+//    return imageWithLine;
 }
 
 // get pixels from image, using RGBA32 color space
