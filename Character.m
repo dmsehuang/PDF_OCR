@@ -29,15 +29,12 @@
     uint32_t *pixels = [self getPixelsFromImage:image];
     pixels = [self thresholdImagePixels:pixels withSize:width*height];
     NSArray *lines = [self LineDetectionForPixels:pixels withWidth:width andHeight:height];
-    NSUInteger topLine = [(NSNumber *)[lines objectAtIndex:2] integerValue];
-    NSUInteger bottomLine = [(NSNumber *)[lines objectAtIndex:3] integerValue];
+    NSUInteger topLine = [(NSNumber *)[lines objectAtIndex:0] integerValue];
+    NSUInteger bottomLine = [(NSNumber *)[lines objectAtIndex:1] integerValue];
     NSArray *characterImages = [self connectedComponentFromPixels:pixels withWidth:width betweenTopLine:topLine andBottomLine:bottomLine];
     
+    free(pixels);
     return characterImages;
-    
-    // for test
-//    UIImage *blackNWhite = [self getBlackNWhiteImageFromImage:image];
-//    return [NSArray arrayWithObjects:blackNWhite, nil];
 }
 
 + (NSString *)getCharacterFromCharacterImage:(UIImage *)image {
@@ -46,8 +43,6 @@
 
 // OCR - line detection
 // TODO - deal with special case: i, j
-//+ (UIImage *)LineDetectionForPixels:(uint32_t *)pixels
-//                          withWidth:(NSUInteger)width andHeight:(NSUInteger)height{
 + (NSArray *)LineDetectionForPixels:(uint32_t *)pixels
                           withWidth:(NSUInteger)width andHeight:(NSUInteger)height{
     // lines array used to store all detected lines
@@ -102,33 +97,23 @@
 // OCR - connected component
 + (NSArray *)connectedComponentFromPixels:(uint32_t *)pixels withWidth:(NSUInteger)width
                            betweenTopLine:(NSUInteger)topLine andBottomLine:(NSUInteger)bottomLine {
-    /* 
+    /*
                             step 1: ASSIGN LABEL
     algorithm: label starts with 1,
     check 8 neighbors (actually 4) and assign the min label to the current position
     if no label is found, assign a new label to it
      */
     
-    NSUInteger parent[width];
     NSUInteger height = bottomLine - topLine + 1;
+    NSUInteger parent[width];
     NSUInteger labelArr[height][width]; // C style
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    
-//    NSLog(@"hhj %d", height);
-//    NSLog(@"hhj %d", width);
     for (int i = 0; i < height; i++) {
-        NSString *line = [NSString stringWithFormat:@""];
         for (int j = 0; j < width; j++) {
             labelArr[i][j] = 0; // zero means not assigned
-            NSUInteger index = width * i + j;
-            if (R(pixels[index]) == 255) {
-                line = [line stringByAppendingString:@" "];
-            } else {
-                line = [line stringByAppendingString:@"*"];
-            }
         }
-//        NSLog(@"%@", line);
     }
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
     NSUInteger labelCount = 0; // label begins with 1
     for (int i = 0; i < height; i++) {
@@ -225,14 +210,13 @@
         if (parent[i] == i) {
             CharacterPixels *ch_pixels = [dict objectForKey:[NSNumber numberWithInt:i]];
             uint32_t *pixels = [ch_pixels getPixels];
-            NSUInteger ch_height = ch_pixels.x_max - ch_pixels.x_min;
-            NSUInteger ch_width = ch_pixels.y_max - ch_pixels.y_min;
+            NSUInteger ch_height = ch_pixels.x_max - ch_pixels.x_min + 1;
+            NSUInteger ch_width = ch_pixels.y_max - ch_pixels.y_min + 1;
             UIImage *ch_image = [self convertPixels:pixels toImageWithWidth:ch_width andHeight:ch_height];
             [characterImages addObject:ch_image];
         }
     }
     return characterImages;
-//    return nil;
 }
 
 // get pure black and white image from original image
@@ -244,6 +228,7 @@
     uint32_t *pixels = [self getPixelsFromImage:image];
     pixels = [self thresholdImagePixels:pixels withSize:width*height];
     UIImage *blackNWhiteImage = [self convertPixels:pixels toImageWithWidth:width andHeight:height];
+    free(pixels);
     return blackNWhiteImage;
     
     // test line
@@ -292,7 +277,7 @@
 // convert pixels back to uiimage
 + (UIImage *)convertPixels:(uint32_t *)pixels toImageWithWidth:(NSUInteger)width andHeight:(NSUInteger)height{
     // the 3rd parameter is the number of bytes data provider has
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, pixels, width * height * 4, NULL);
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, pixels, width * height * 4, providerReleaseData);
     
     // parameters
     NSUInteger bytesPerRow = bytesPerPixel * width;
@@ -309,6 +294,12 @@
     CGDataProviderRelease(dataProvider);
     
     return image;
+}
+
+static void providerReleaseData(void *info, const void *data, size_t size)
+{
+    NSLog(@"release data, pointer addr %p", data);
+    free((void *)data);
 }
 
 @end

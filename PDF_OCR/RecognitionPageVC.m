@@ -20,8 +20,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.numberOfPages = 5;
-    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
+//    self.pdfImage = [UIImage imageNamed:@"1_sample_complete.png"];
+//    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
 //    self.pdfImage = [UIImage imageNamed:@"7_Te.png"];
+    self.pdfImage = [UIImage imageNamed:@"8_one_line.png"];
     
     self.dataSource = self;
     self.pageIndex = 0;
@@ -47,7 +49,7 @@
 */
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-    NSLog(@"before");
+//    NSLog(@"before");
     if (self.pageIndex == 0) {
         return nil;
     }
@@ -56,7 +58,7 @@
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-    NSLog(@"after, count: %d", [self.characterImages count]);
+//    NSLog(@"after, count: %d", [self.characterImages count]);
     if (self.pageIndex + 1 == [self.characterImages count]) {
         return nil;
     }
@@ -65,9 +67,14 @@
 }
 
 - (RecognitionDetailVC *)viewControllerAtIndex:(NSUInteger)index {
+//    NSLog(@"Get veiw controller at index");
+    if (self.characterImages == nil) {
+        return nil;
+    }
     RecognitionDetailVC *detailVC = [[RecognitionDetailVC alloc] init];
     detailVC.characterNumber = index;
     detailVC.characterImage = [self.characterImages objectAtIndex:index];
+//    NSLog(@"before return: veiw controller at index");
     return detailVC;
 }
 

@@ -24,4 +24,6 @@
 
 // receive an image of text and return images of words
 
++ (UIImage *)convertPixels:(uint32_t *)pixels toImageWithWidth:(NSUInteger)width andHeight:(NSUInteger)height;
+
 @end

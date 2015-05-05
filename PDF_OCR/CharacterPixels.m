@@ -7,6 +7,7 @@
 //
 
 #import "CharacterPixels.h"
+#import "Character.h"
 
 @implementation CharacterPixels
 
@@ -42,17 +43,16 @@
 }
 
 - (uint32_t *)getPixels {
-    NSUInteger height = self.x_max - self.x_min;
-    NSUInteger width = self.y_max - self.y_min;
+    NSUInteger height = self.x_max - self.x_min + 1;
+    NSUInteger width = self.y_max - self.y_min + 1;
     uint32_t *pixels = (uint32_t *)calloc(width * height, sizeof(uint32_t));
     for (int i = 0; i < [self.x_arr count]; i++) {
-        int x = [(NSNumber *)[self.x_arr objectAtIndex:i] integerValue] - self.x_min;
-        int y = [(NSNumber *)[self.y_arr objectAtIndex:i] integerValue] - self.y_min;
-        int index = (int)width * x + y;
+        NSUInteger x = [(NSNumber *)[self.x_arr objectAtIndex:i] integerValue] - self.x_min;
+        NSUInteger y = [(NSNumber *)[self.y_arr objectAtIndex:i] integerValue] - self.y_min;
+        NSUInteger index = width * x + y;
         pixels[index] = 0xFF000000;
     }
     return pixels;
 }
-
 
 @end
