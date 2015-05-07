@@ -17,6 +17,7 @@
 @property (nonatomic) NSUInteger x_max;
 @property (nonatomic) NSUInteger y_min;
 @property (nonatomic) NSUInteger y_max;
+@property (nonatomic, strong) NSMutableArray *propertyVector;
 
 - (void)addPixelPositionX:(NSUInteger)x andY:(NSUInteger)y;
 - (void)appendPixelsFrom:(CharacterPixels *)characterPixels;

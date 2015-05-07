@@ -22,8 +22,9 @@
     self.numberOfPages = 5;
 //    self.pdfImage = [UIImage imageNamed:@"1_sample_complete.png"];
 //    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
+    self.pdfImage = [UIImage imageNamed:@"6_F.png"];
 //    self.pdfImage = [UIImage imageNamed:@"7_Te.png"];
-    self.pdfImage = [UIImage imageNamed:@"8_one_line.png"];
+//    self.pdfImage = [UIImage imageNamed:@"8_one_line.png"];
     
     self.dataSource = self;
     self.pageIndex = 0;

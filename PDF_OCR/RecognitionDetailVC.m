@@ -22,6 +22,7 @@
 }
 
 - (void)initGUI {
+    /**************    1. label    ******************/
     CGFloat label_x = self.view.frame.size.width/2;
     CGFloat label_y = 50;
     CGFloat label_width = 100;
@@ -30,17 +31,22 @@
                       CGRectMake(label_x, label_y, label_width, label_height)];
     label.backgroundColor = [UIColor yellowColor];
     label.text = [NSString stringWithFormat:@"Character #%lu", (unsigned long)self.characterNumber];
-    
     [self.view addSubview:label];
     self.view.backgroundColor = [UIColor whiteColor];
     
+    /**************   2. character image   ***************/
     CGFloat x = 50;
     CGFloat y = 300;
-//    UIImage *blackNWhiteImage = [Character getBlackNWhiteImageFromImage:self.pdfImage];
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, y,
                                                                            self.characterImage.size.width, self.characterImage.size.height)];
     imageView.image = self.characterImage;
+    // for test, show image border
+    [imageView.layer setBorderColor:[[UIColor redColor] CGColor]];
+    [imageView.layer setBorderWidth:0.5];
     [self.view addSubview:imageView];
+    
+    /***********    3. matrix    ***************/
+    
 }
 
 - (void)didReceiveMemoryWarning {
