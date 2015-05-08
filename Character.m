@@ -18,9 +18,9 @@
 #define bytesPerPixel 4
 #define bitsPerComponent 8
 
-
 @implementation Character
 
+// This function will return both image and its corresponding property vector
 + (NSArray *)getCharactersFromTextImage:(UIImage *)image {
     CGImageRef imageRef = [image CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
@@ -214,6 +214,9 @@
             NSUInteger ch_width = ch_pixels.y_max - ch_pixels.y_min + 1;
             UIImage *ch_image = [self convertPixels:pixels toImageWithWidth:ch_width andHeight:ch_height];
             [characterImages addObject:ch_image];
+            // bad design, combine images with property vectors
+            NSArray *propVec = ch_pixels.propertyVector;
+            [characterImages addObject:propVec];
         }
     }
     return characterImages;

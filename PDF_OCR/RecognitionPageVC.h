@@ -10,9 +10,9 @@
 
 @interface RecognitionPageVC : UIPageViewController <UIPageViewControllerDataSource>
 
-@property (nonatomic) NSUInteger pageIndex;
 @property (nonatomic) NSUInteger numberOfPages;
 @property (nonatomic, strong) UIImage *pdfImage;
-@property (nonatomic, strong) NSArray *characterImages;
+@property (nonatomic, strong) NSMutableArray *characterImages;
+@property (nonatomic, strong) NSMutableArray *propVectors;
 
 @end

@@ -18,9 +18,28 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self initGUI];
+    //[self initGUI];
+    [self setUpGUI];
 }
 
+// new code: build GUI with xib file
+- (void)setUpGUI {
+    self.characterNumLabel.text = [NSString stringWithFormat:@"Character #%lu", (unsigned long)self.characterNumber];
+    self.characterImgView.image = self.characterImage;
+    NSMutableString *propVecStr = [[NSMutableString alloc] init];
+    for (int i = 0; i < [self.propVec count]; i++) {
+        [propVecStr appendString:[(NSNumber *)[self.propVec objectAtIndex:i] stringValue]];
+        [propVecStr appendString:@"\n"];
+    }
+    self.propVecTextView.text = propVecStr;
+}
+
+- (IBAction)okButton:(id)sender {
+    NSString *ch = self.correctCharacter.text;
+    NSLog(@"user input: %@", ch);
+}
+
+// old code: build GUI with code
 - (void)initGUI {
     /**************    1. label    ******************/
     CGFloat label_x = self.view.frame.size.width/2;

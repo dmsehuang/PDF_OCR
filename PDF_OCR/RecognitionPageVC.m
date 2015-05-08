@@ -22,13 +22,23 @@
     self.numberOfPages = 5;
 //    self.pdfImage = [UIImage imageNamed:@"1_sample_complete.png"];
 //    self.pdfImage = [UIImage imageNamed:@"2_sample_part.png"];
-    self.pdfImage = [UIImage imageNamed:@"6_F.png"];
+//    self.pdfImage = [UIImage imageNamed:@"6_F.png"];
 //    self.pdfImage = [UIImage imageNamed:@"7_Te.png"];
-//    self.pdfImage = [UIImage imageNamed:@"8_one_line.png"];
+    self.pdfImage = [UIImage imageNamed:@"8_one_line.png"];
     
     self.dataSource = self;
-    self.pageIndex = 0;
-    self.characterImages = [Character getCharactersFromTextImage:self.pdfImage];
+    //self.pageIndex = 0;
+    NSArray *imgAndPropVecArr = [Character getCharactersFromTextImage:self.pdfImage];
+    self.characterImages = [[NSMutableArray alloc] init];
+    self.propVectors = [[NSMutableArray alloc] init];
+    // getCharacters will return both images and its corresponding property vectors
+    for (int i = 0; i < [imgAndPropVecArr count]; i++) {
+        if (i % 2 == 0) {
+            [self.characterImages addObject:[imgAndPropVecArr objectAtIndex:i]];
+        } else {
+            [self.propVectors addObject:[imgAndPropVecArr objectAtIndex:i]];
+        }
+    }
     RecognitionDetailVC *initialDetailVC = [self viewControllerAtIndex:0];
     NSArray *viewControllers = [NSArray arrayWithObjects:initialDetailVC, nil];
     [self setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
@@ -50,32 +60,32 @@
 */
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-//    NSLog(@"before");
-    if (self.pageIndex == 0) {
+    NSUInteger index = [(RecognitionDetailVC *)viewController characterNumber];
+    if (index == 0) {
         return nil;
     }
-    self.pageIndex--;
-    return [self viewControllerAtIndex:self.pageIndex];
+    index--;
+    return [self viewControllerAtIndex:index];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-//    NSLog(@"after, count: %d", [self.characterImages count]);
-    if (self.pageIndex + 1 == [self.characterImages count]) {
+    NSUInteger index = [(RecognitionDetailVC *)viewController characterNumber];
+    ++index;
+    if (index == [self.characterImages count]) {
         return nil;
     }
-    self.pageIndex++;
-    return [self viewControllerAtIndex:self.pageIndex];
+    return [self viewControllerAtIndex:index];
 }
 
 - (RecognitionDetailVC *)viewControllerAtIndex:(NSUInteger)index {
-//    NSLog(@"Get veiw controller at index");
     if (self.characterImages == nil) {
         return nil;
     }
-    RecognitionDetailVC *detailVC = [[RecognitionDetailVC alloc] init];
+    //RecognitionDetailVC *detailVC = [[RecognitionDetailVC alloc] init];
+    RecognitionDetailVC *detailVC = [[RecognitionDetailVC alloc] initWithNibName:@"RecognitionDetailView" bundle:nil];
     detailVC.characterNumber = index;
     detailVC.characterImage = [self.characterImages objectAtIndex:index];
-//    NSLog(@"before return: veiw controller at index");
+    detailVC.propVec = [self.propVectors objectAtIndex:index];
     return detailVC;
 }
 

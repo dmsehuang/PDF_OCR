@@ -73,7 +73,7 @@
             delta_x[i] = height/5;
         }
         if (i > 0) {
-            boundary_x[i] = boundary_x[i-1] + delta_x[i];
+            boundary_x[i] = boundary_x[i-1] + delta_x[i-1];
             //NSLog(@"boundary x: %d", boundary_x[i]);
         }
     }
@@ -89,7 +89,7 @@
             delta_y[i] = width/5;
         }
         if (i > 0) {
-            boundary_y[i] = boundary_y[i-1] + delta_y[i];
+            boundary_y[i] = boundary_y[i-1] + delta_y[i-1];
             //NSLog(@"boundary y: %d", boundary_y[i]);
         }
     }
@@ -141,14 +141,14 @@
         }
     }
     for (int i = 0; i < 25; i++) {
-        //NSLog(@"black %d : white %d", black[i], white[i]);
+        //NSLog(@"black %d : white %d, index: %d\n\n", black[i], white[i], i);
         prop_vec[i] = (CGFloat)black[i]/(CGFloat)(black[i] + white[i]); // the ratio of black pixels
     }
     prop_vec[25] = (CGFloat)width/(CGFloat)height;
     prop_vec[26] = 0.0; // 0 means not i or j
     self.propertyVector = [[NSMutableArray alloc] init];
     for (int i = 0; i < 27; i++) {
-        NSLog(@"vector %d: %f", i, prop_vec[i]);
+        //NSLog(@"vector %d: %f", i, prop_vec[i]);
         [self.propertyVector addObject:[NSNumber numberWithFloat:prop_vec[i]]];
     }
     return ;
