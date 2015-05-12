@@ -9,6 +9,7 @@
 #import "CharactersTVC.h"
 
 @interface CharactersTVC ()
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -22,6 +23,8 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [self.tableView registerNib:[UINib nibWithNibName:@"CellView" bundle:nil] forCellReuseIdentifier:@"Cell"];
+    [self getData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,29 +32,67 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+- (void)getData {
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"RecognizedCharacter" inManagedObjectContext:self.managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entityDescription];
+    
+    NSError *err = nil;
+    self.recognizedCharArr = [self.managedObjectContext executeFetchRequest:fetchRequest error:&err];
+    if (err) {
+        NSLog(@"Unable to execute fetch request");
+        NSLog(@"%@", err);
+    } else {
+        NSLog(@"Successfully fetch recognized characters");
+    }
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return [self.recognizedCharArr count];
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+    NSString *cellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+
     // Configure the cell...
+    RecognizedCharacter *recognizedChar = [self.recognizedCharArr objectAtIndex:indexPath.row];
+    cell.textLabel.text = recognizedChar.value;
+    cell.imageView.image = [NSKeyedUnarchiver unarchiveObjectWithData:recognizedChar.image];
     
     return cell;
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did select row: %d", indexPath.row);
+    RecognizedCharacter *recognizedChar = [self.recognizedCharArr objectAtIndex:indexPath.row];
+    // alloc detail view and assign value to it
+    CharacterDetailView *detailVC = [[CharacterDetailView alloc] init];
+    detailVC.character = recognizedChar.value;
+    detailVC.characterImage = [NSKeyedUnarchiver unarchiveObjectWithData:recognizedChar.image];
+    detailVC.propVec = [NSKeyedUnarchiver unarchiveObjectWithData:recognizedChar.propVector];
+    // push detail view to navigation stack
+    [self.navi pushViewController:detailVC animated:YES];
+}
+
 
 /*
 // Override to support conditional editing of the table view.

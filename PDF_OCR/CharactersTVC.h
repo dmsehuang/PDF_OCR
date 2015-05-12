@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
+#import "RecognizedCharacter.h"
+#import "CharacterDetailView.h"
 
 @interface CharactersTVC : UITableViewController
+
+@property (nonatomic, strong) UINavigationController *navi;
+@property (nonatomic, strong) NSArray *recognizedCharArr;
 
 @end

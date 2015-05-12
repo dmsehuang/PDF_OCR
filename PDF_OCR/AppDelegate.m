@@ -34,10 +34,18 @@
     
     // table view controller
     CharactersTVC *charactersTVC = [[CharactersTVC alloc] init];
-    charactersTVC.title = @"mastered";
+    charactersTVC.title = @"Characters Table";
     //charactersTVC.tabBarItem.image = [UIImage imageNamed:@"Crab-50.png"];
     
-    tabBarController.viewControllers = [NSArray arrayWithObjects:pageVC, charactersTVC, nil];
+    // navigation controller
+    UINavigationController *navi =
+    [[UINavigationController alloc] initWithRootViewController:charactersTVC];
+    navi.title = @"Recognized";
+    
+    // hold a strong reference to navigation controller, not sure if it leads to memory leak
+    charactersTVC.navi = navi;
+    
+    tabBarController.viewControllers = [NSArray arrayWithObjects:pageVC, navi, nil];
     
     self.window.rootViewController = tabBarController;
 }

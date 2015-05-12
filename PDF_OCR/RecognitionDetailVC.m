@@ -9,6 +9,8 @@
 #import "RecognitionDetailVC.h"
 
 @interface RecognitionDetailVC ()
+// private member
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -37,6 +39,34 @@
 - (IBAction)okButton:(id)sender {
     NSString *ch = self.correctCharacter.text;
     NSLog(@"user input: %@", ch);
+    
+    // core data, save the character
+    NSEntityDescription *entiryDescription = [NSEntityDescription entityForName:@"RecognizedCharacter" inManagedObjectContext:self.managedObjectContext];
+    /*
+    NSManagedObject *recognizedChar = [[NSManagedObject alloc] initWithEntity:entiryDescription insertIntoManagedObjectContext:self.managedObjectContext];
+    
+    // key-value programming
+    [recognizedChar setValue:ch forKey:@"value"];
+    NSData *propVector = [NSKeyedArchiver archivedDataWithRootObject:self.propVec];
+    [recognizedChar setValue:propVector forKey:@"propVector"];
+    NSData *img = [NSKeyedArchiver archivedDataWithRootObject:self.characterImage];
+    [recognizedChar setValue:img forKey:@"image"];
+     */
+    
+    // new way to handle managed object
+    RecognizedCharacter *recognizedChar = [[RecognizedCharacter alloc] initWithEntity:entiryDescription insertIntoManagedObjectContext:self.managedObjectContext];
+    recognizedChar.value = ch;
+    recognizedChar.propVector = [NSKeyedArchiver archivedDataWithRootObject:self.propVec];
+    recognizedChar.image = [NSKeyedArchiver archivedDataWithRootObject:self.characterImage];
+    
+    // save the object
+    NSError *err = nil;
+    if (![recognizedChar.managedObjectContext save:&err]) {
+        NSLog(@"Unable to save object to context");
+        NSLog(@"%@", err);
+    } else {
+        NSLog(@"Successfully save");
+    }
 }
 
 // old code: build GUI with code
@@ -66,6 +96,18 @@
     
     /***********    3. matrix    ***************/
     
+}
+
+// core data, get the managed object context
+// use to save object
+// lazy instantiation
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
 }
 
 - (void)didReceiveMemoryWarning {
